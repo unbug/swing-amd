@@ -19,7 +19,7 @@ A swipeable cards interface. The swipe-left/swipe-right for yes/no input. As see
 
 Give it a [swing](http://gajus.com/sandbox/swing/examples/card-stack/)! and please [tweet it](https://twitter.com/intent/retweet?tweet_id=527505589732405248) if you like it. : )
 
-![Card stack example.](./.gitdown/card-stack.gif)
+![Card stack example.](https://raw.githubusercontent.com/gajus/swing/master/.gitdown/card-stack.gif)
 
 <h2 id="swing-contents">Contents</h2>
 
