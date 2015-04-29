@@ -1,0 +1,22 @@
+{
+  "name": "swing-amd",
+  "version": "0.0.1",
+  "authors": [
+    "unbug <tidelgl@gmail.com>"
+  ],
+  "description": "AMD for swing - A swipeable cards interface. The swipe-left/swipe-right for yes/no input. As seen in apps like Jelly and Tinder.",
+  "main": "index.html",
+  "keywords": [
+    "swing",
+    "swing-amd",
+    "amd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
