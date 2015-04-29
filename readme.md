@@ -8,5 +8,6 @@ Install
 bower install swing-amd --save-dev
 ```
 
-![Card stack example.](https://raw.githubusercontent.com/gajus/swing/master/.gitdown/card-stack.gif)
 ![Deja example.](https://github.com/unbug/swing-amd/blob/master/image/deja-demo.gif)
+
+![Card stack example.](https://raw.githubusercontent.com/gajus/swing/master/.gitdown/card-stack.gif)
