@@ -4,13 +4,15 @@ define(function(require, exports, module) {
     var global = window;
 
     var Card,
-        Sister = require('lib/sister'),
+        Sister = require('lib/swing/sister'),
         Hammer = require('lib/hammer') || window['Hammer'],
         rebound = require('lib/rebound'),
-        vendorPrefix = require('lib/vendor-prefix'),
-        dom = require('dom'),
+        vendorPrefix = require('lib/swing/vendor-prefix'),
+        dom = require('lib/swing/dom'),
         util = {},
-        _isTouchDevice;
+        _isTouchDevice,
+        requestAnimFrame,
+        requestAnimFrame;
 
     /**
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
@@ -18,6 +20,20 @@ define(function(require, exports, module) {
     util.randomInt = function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
+
+    //http://notes.jetienne.com/2011/05/18/cancelRequestAnimFrame-for-paul-irish-requestAnimFrame.html
+    cancelRequestAnimFrame = ( function() {
+        return window.cancelAnimationFrame          ||
+            window.webkitCancelRequestAnimationFrame    ||
+            clearTimeout
+    } )();
+    requestAnimFrame = (function(){
+        return  window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            function(/* function */ callback, /* DOMElement */ element){
+                return window.setTimeout(callback, 1000 / 60);
+            };
+    })();
 
     /**
      * @param {Stack} stack
@@ -36,7 +52,12 @@ define(function(require, exports, module) {
             onSpringUpdate,
             throwWhere,
             mc,
-            defaultThreshold = 0.05;
+            defaultThreshold = 0.05,
+            dragTimer = 0,
+            isDraging = false,
+            curX = 0,
+            curY = 0;
+
 
         if (!(this instanceof Card)) {
             return new Card(stack, targetElement);
@@ -67,17 +88,10 @@ define(function(require, exports, module) {
 
         Card.appendToParent(targetElement);
 
-        eventEmitter.on('_panstart', function () {
-            Card.appendToParent(targetElement);
 
-            eventEmitter.trigger('dragstart', {
-                target: targetElement
-            });
-        });
-
-        eventEmitter.on('_panmove', function (e) {
-            var x = lastTranslate.x + e.deltaX,
-                y = lastTranslate.y + e.deltaY,
+        function doMove(){
+            var x = lastTranslate.x + curX,
+                y = lastTranslate.y + curY,
                 r = config.rotation(x, y, targetElement, config.maxRotation);
 
             config.transform(targetElement, x, y, r);
@@ -87,9 +101,42 @@ define(function(require, exports, module) {
                 throwOutConfidence: config.throwOutConfidence(x, targetElement),
                 throwDirection: x < 0 ? Card.DIRECTION_LEFT : Card.DIRECTION_RIGHT
             });
+
+        }
+        function cancelMove(){
+            dragTimer && cancelRequestAnimFrame(dragTimer);
+        }
+
+        eventEmitter.on('_panstart', function () {
+            Card.appendToParent(targetElement);
+
+            curX = curY = 0;
+
+            cancelMove();
+            isDraging = true;
+            //raf
+            (function animloop(){
+                if(!isDraging){
+                    return;
+                }
+                doMove();
+                dragTimer = requestAnimFrame(animloop);
+            })();
+            //end raf
+
+            eventEmitter.trigger('dragstart', {
+                target: targetElement
+            });
+        });
+
+        eventEmitter.on('_panmove', function (e) {
+            curX = e.deltaX;
+            curY = e.deltaY;
         });
 
         eventEmitter.on('_panend', function (e) {
+            isDraging = false;
+            cancelMove();
             var x = lastTranslate.x + e.deltaX,
                 y = lastTranslate.y + e.deltaY;
 
@@ -220,6 +267,8 @@ define(function(require, exports, module) {
          * Removes the listeners from the physics simulation.
          */
         card.destroy = function () {
+            cancelMove();
+
             mc.destroy();
             springThrowIn.destroy();
             springThrowOut.destroy();
