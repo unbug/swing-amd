@@ -4,11 +4,11 @@ define(function(require, exports, module) {
     var global = window;
 
     var Card,
-        Sister = require('lib/swing/sister'),
+        Sister = require('lib/sister'),
         Hammer = require('lib/hammer') || window['Hammer'],
         rebound = require('lib/rebound'),
-        vendorPrefix = require('lib/swing/vendor-prefix'),
-        dom = require('lib/swing/dom'),
+        vendorPrefix = require('lib/vendor-prefix'),
+        dom = require('dom'),
         util = {},
         _isTouchDevice,
         requestAnimFrame,
