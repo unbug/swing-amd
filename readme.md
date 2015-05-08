@@ -7,6 +7,16 @@ Install
 ```shell
 bower install swing-amd --save-dev
 ```
+Use
+=========
+```js
+var swing = require('index');
+````
+or use the min js
+```html
+<script src="dist/swing.min.js"></script>
+```
+
 
 ![Deja example.](https://github.com/unbug/swing-amd/blob/master/image/deja-demo.gif)
 
